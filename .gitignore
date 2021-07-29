@@ -1,0 +1,22 @@
+# Certificates
+*.pem
+
+# Vagrant generated files
+.vagrant
+
+# Log files
+*.log
+
+# RKE generated files
+*.rkestate
+kube_config*.yml
+
+# K8s secrets
+*secret.yml
+
+# Local config txt files
+*config.txt
+
+# Cluster registration token values
+downstream-manifests/values.yaml
+downstream-manifests/git-repo.yml
