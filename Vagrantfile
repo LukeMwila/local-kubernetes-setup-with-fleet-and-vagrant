@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
         v.cpus = 2
         end
     end
-    ## Downstream Single Node Cluster 1
+    ## Downstream Cluster 1 Master
     config.vm.define "downstream1_master" do |downstream1_master|
       downstream1_master.vm.provision "shell", path: "script.sh"
       downstream1_master.vm.network "private_network", ip: "192.168.10.5" 
@@ -34,12 +34,23 @@ Vagrant.configure("2") do |config|
         v.cpus = 2
       end
     end
-    ## Downstream Single Node Cluster 1
+    ## Downstream Cluster 1 Worker
     config.vm.define "downstream1_worker" do |downstream1_worker|
       downstream1_worker.vm.provision "shell", path: "script.sh"
       downstream1_worker.vm.network "private_network", ip: "192.168.10.6" 
       downstream1_worker.vm.hostname = "downstream1worker"
       downstream1_worker.vm.provider "virtualbox" do |v|
+        v.customize ["modifyvm", :id, "--audio", "none"]
+        v.memory = 4024
+        v.cpus = 2
+      end
+    end
+    ## Rancher Control Plane
+    config.vm.define "rancher_cluster" do |rancher_cluster|
+      rancher_cluster.vm.provision "shell", path: "rancher_node_script.sh"
+      rancher_cluster.vm.network "private_network", ip: "172.16.128.4" 
+      rancher_cluster.vm.hostname = "ranchercluster"
+      rancher_cluster.vm.provider "virtualbox" do |v|
         v.customize ["modifyvm", :id, "--audio", "none"]
         v.memory = 4024
         v.cpus = 2

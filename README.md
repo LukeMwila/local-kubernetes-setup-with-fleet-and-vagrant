@@ -1,6 +1,6 @@
 # Fleet Multi Cluster Management (Local K8s Environment)
 This repository contains the source code for a multi cluster management setup with Fleet in a local environment.
-One cluster is used by the Fleet manager and the other is a downstream cluster that Fleet deploys to.
+One cluster is used by the Fleet manager and the other is a downstream cluster that Fleet deploys to. The third server is used to spin up Rancher, where you can optionally import the Fleet manager cluster.
 
 ![Fleet Logo](Fleet.png)
 
@@ -21,18 +21,18 @@ ssh-copy-id root@[relevant ip address]
 ```
 When prompted, enter the root user password configured in the bootstrap node script.
 
-## Provision/Create Kubernetes cluster with RKE
+## Provision/Create Kubernetes clusters with RKE
 To provision the cluster on the VMs, run the `rke config` command. You will be presented with a series of questions to which the answers will be used to declare the cluster config in a generated `cluster.yml` file upon completion. Alternatively, you can create the cluster.yml file and populate it with your desired configuration. Once you have the `cluster.yml` file, run the following command:
 ```
 rke up
 ```
 When the cluster has been provisioned, the following files will be generated in the root directory:
 - cluster.rkestate - the cluster state file 
-- kube_config_cluster.yml - kube config file
+- kube_config_*.yml - kube config file
 
 To add the cluster to your context, copy the kube config file:
 ```
-cp kube_config_cluster.yml ~/.kube/config
+cp kube_config_*.yml ~/.kube/config
 ```
 If you do not have a `./kube` directory on your machine you will have to create one. 
 
@@ -45,6 +45,7 @@ or
 kubectl config current-context
 ```
 If you have a tool like [K9s](https://k9scli.io/), you can start it up to see the objects that are currently running in your cluster. 
+<br><br>*Be sure to repeat this process for all the clusters in this setup*.
 
 ## Fleet Controller Cluster & Downstream Cluster Registration
 In order for your Fleet multi cluster management installation to properly work it is important the correct API server URL and CA certificates are configured properly. The Fleet agents will communicate to the Kubernetes API server URL. This means the Kubernetes API server must be accessible to the downstream clusters. You will also need to obtain the CA certificate of the API server.
@@ -142,3 +143,29 @@ kubectl apply -f <git-repo-manifest>
 ```
 
 Lastly, you can review your GitRepo deployment to check the status of Fleet cloning the repo and deploying the resources to the downstream cluster. Make sure the repo being cloned matches the [expected structure](http://fleet.rancher.io/gitrepo-structure/) for Fleet.
+
+## Setup Rancher Cluster
+
+### Install Cert Manager
+```
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.4.0/cert-manager.yaml
+```
+
+### Create `cattle-system` Namespace
+```
+kubectl create namespace cattle-system
+```
+
+### Install Rancher
+```
+helm install rancher rancher-stable/rancher \
+  --namespace cattle-system \
+  --set hostname=<hostname>
+  --set letsEncrypt.email=<email>
+```
+
+### Import Fleet into Rancher
+Open up Rancher in your browser, and then follow the steps to import a cluster.
+```
+kubectl create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user [USER_ACCOUNT]
+```
