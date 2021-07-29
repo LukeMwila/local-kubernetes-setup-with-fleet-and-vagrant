@@ -18,5 +18,5 @@ kube_config*.yml
 *config.txt
 
 # Cluster registration token values
-downstream-manifests/values.yaml
-downstream-manifests/git-repo.yml
+raw-manifests/values.yaml
+raw-manifests/git-repo.yml
