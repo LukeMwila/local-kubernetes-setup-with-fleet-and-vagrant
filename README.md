@@ -88,7 +88,7 @@ spec:
 ```
 
 ```
-kubectl apply -f downstream-manifests/cluster-registration-token.yml
+kubectl apply -f raw-manifests/cluster-registration-token.yml
 ```
 
 The token value is the contents of a values.yaml file that is expected to be passed to helm install to install the Fleet agent on your downstream cluster. 
