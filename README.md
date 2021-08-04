@@ -88,6 +88,7 @@ spec:
 ```
 
 ```
+kubectl create namespace clusters
 kubectl apply -f raw-manifests/cluster-registration-token.yml
 ```
 
