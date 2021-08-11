@@ -113,6 +113,11 @@ kubectl -n fleet-system logs -l app=fleet-agent
 kubectl -n fleet-system get pods -l app=fleet-agent
 ```
 
+Deploy the agent to other downstream clusters by switching the context:
+```
+kubectl config use-context <cluster-name>
+```
+
 Change back to the kube context for your Fleet manager and run the following command:
 ```
 kubectl -n clusters get clusters.fleet.cattle.io
@@ -144,6 +149,13 @@ kubectl apply -f <git-repo-manifest>
 ```
 
 Lastly, you can review your GitRepo deployment to check the status of Fleet cloning the repo and deploying the resources to the downstream cluster. Make sure the repo being cloned matches the [expected structure](http://fleet.rancher.io/gitrepo-structure/) for Fleet.
+
+## Uninstall Fleet
+```
+helm -n fleet-system uninstall fleet
+helm -n fleet-system uninstall fleet-crd
+helm -n fleet-system uninstall fleet-agent
+```
 
 ## Setup Rancher Cluster
 
